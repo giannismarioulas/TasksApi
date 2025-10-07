@@ -17,7 +17,12 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 
-app.UseHttpsRedirection();
+// Disable HTTPS redirection for Render (it uses its own proxy)
+if (!app.Environment.IsDevelopment())
+{
+    app.Urls.Add("http://*:10000");
+}
+
 
 // ----------------------
 // CRUD Endpoints
@@ -63,5 +68,7 @@ app.MapDelete("/tasks/{id}", async (int id, TasksDbContext db) =>
     await db.SaveChangesAsync();
     return Results.NoContent();
 });
+
+app.Run("http://0.0.0.0:10000");
 
 app.Run();
